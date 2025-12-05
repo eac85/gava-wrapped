@@ -1,14 +1,12 @@
+// Vercel serverless function handler
 import express from 'express';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
-import { calculatePatientData } from './services/dataCalculator.js';
+import { calculatePatientData } from '../src/services/dataCalculator.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
 app.use(express.json());
 
 // Initialize Supabase client
@@ -16,13 +14,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Please set SUPABASE_URL and SUPABASE_ANON_KEY');
-  // Don't exit in serverless environment, just log the error
-  if (process.env.VERCEL) {
-    console.error('Environment variables must be set in Vercel project settings');
-  } else {
-    process.exit(1);
-  }
+  console.error('Missing Supabase credentials. Please set SUPABASE_URL and SUPABASE_ANON_KEY in Vercel environment variables');
 }
 
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
@@ -65,16 +57,6 @@ app.get('/api/patient/:patientId/data', async (req, res) => {
   }
 });
 
-// Export for Vercel serverless functions
+// Export the Express app for Vercel
 export default app;
-
-// Start server locally (not on Vercel)
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Gava Wrapped microservice running on port ${PORT}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-  });
-}
-
-export { supabase };
 

@@ -94,6 +94,23 @@ curl http://localhost:3000/api/patient/123/data?year=2023
 }
 ```
 
+## Deployment to Vercel
+
+1. **Set Environment Variables in Vercel**:
+   - Go to your Vercel project settings
+   - Navigate to "Environment Variables"
+   - Add the following:
+     - `SUPABASE_URL` - Your Supabase project URL
+     - `SUPABASE_ANON_KEY` - Your Supabase anonymous key
+
+2. **Deploy**:
+   ```bash
+   vercel
+   ```
+   Or connect your GitHub repository to Vercel for automatic deployments.
+
+3. **Important**: Make sure your `vercel.json` file is in the root directory (already included).
+
 ## Next Steps
 
 1. Update `src/services/dataCalculator.js` with your specific calculation queries
