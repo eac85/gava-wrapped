@@ -1,5 +1,6 @@
 // Vercel serverless function handler
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import { calculatePatientData } from '../src/services/dataCalculator.js';
@@ -7,6 +8,38 @@ import { calculatePatientData } from '../src/services/dataCalculator.js';
 dotenv.config();
 
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'https://gava.vercel.app',
+      'https://www.gava.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      // Add your frontend domains here
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // For development, you might want to allow all origins
+      // In production, be more restrictive
+      callback(null, true); // Allow all for now - change to callback(new Error('Not allowed by CORS')) for production
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Initialize Supabase client
